@@ -3,46 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Mapa analítico e interactivo de las rentas medias por distrito en Málaga para la toma de decisiones gastronómicas.">
-  <title>Málaga Gastro-Locator</title>
-  
+  <meta name="description" content="Mapa de calor del potencial de restauracion combinando densidad de poblacion y licencias de restauracion en Malaga.">
+  <title>Gastro-Locator: Potencial de Restauracion</title>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin=""/>
-  
+
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header>
-    <h1>📍 Málaga Gastro-Locator</h1>
-    <p>Analiza el perfil económico de los distritos para posicionar tu negocio de restauración.</p>
+    <h1>🔥 Gastro-Locator: Potencial de Restauracion</h1>
+    <p>Cruce de densidad de poblacion y licencias de restauracion para priorizar zonas con menor saturacion.</p>
   </header>
 
   <main>
     <div class="controls-card">
       <div class="control-group">
-        <label for="perfil">Perfil económico del cliente:</label>
-        <select id="perfil" name="perfil">
-          <option value="Todas">Todos los perfiles</option>
-          <option value="Renta Baja">Renta Baja (&lt; 22K €)</option>
-          <option value="Renta Media">Renta Media (22K - 28K €)</option>
-          <option value="Renta Alta">Renta Alta (&gt; 28K €)</option>
+        <label for="categoria">Categoria de potencial:</label>
+        <select id="categoria" name="categoria">
+          <option value="Todas">Todas las categorias</option>
+          <option value="Alto Potencial">Alto Potencial</option>
+          <option value="Potencial Medio">Potencial Medio</option>
+          <option value="Potencial Bajo">Potencial Bajo</option>
         </select>
+      </div>
+      <div class="control-group">
+        <label for="min-pob">Poblacion minima:</label>
+        <input id="min-pob" type="range" min="0" max="600000" step="1000" value="0">
+        <span id="min-pob-value" aria-live="polite">0 hab.</span>
       </div>
       <button id="reset" aria-label="Restablecer todos los filtros del mapa">Mostrar todas las zonas</button>
     </div>
 
-    <div id="map" role="region" aria-label="Mapa interactivo de distritos de Málaga"></div>
+    <div id="map" role="region" aria-label="Mapa de calor del potencial de restauracion"></div>
 
     <section class="data-section">
-      <h2>Métricas por Zonas de Influencia</h2>
+      <h2>Ranking de municipios por potencial</h2>
       <div class="table-container">
         <table id="table" aria-live="polite">
-          <caption class="sr-only">Desglose de la renta media anual por distritos de Málaga</caption>
+          <caption class="sr-only">Desglose del potencial de restauracion por municipio</caption>
           <thead>
             <tr>
-              <th scope="col">Distrito</th>
-              <th scope="col">Renta Media Anual</th>
-              <th scope="col">Clasificación</th>
+              <th scope="col">Municipio</th>
+              <th scope="col">Poblacion</th>
+              <th scope="col">Restaurantes</th>
+              <th scope="col">Rest/1.000 hab</th>
+              <th scope="col">Potencial</th>
+              <th scope="col">Categoria</th>
             </tr>
           </thead>
           <tbody id="table-body">
@@ -58,80 +66,150 @@
       try {
         const res = await fetch('data.json');
         const data = await res.json();
-        
-        // Render coordinates matching Málaga center
-        const map = L.map('map').setView([36.7213, -4.4214], 12);
+
+        const map = L.map('map').setView([36.72, -4.50], 10);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         const markers = [];
-        
-        // CSS Linked variable colors for map syncing
+
         function colorFor(cat) {
-          if(cat === 'Renta Baja') return '#1d4ed8';
-          if(cat === 'Renta Media') return '#b45309';
-          return '#b91c1c';
+          if (cat === 'Alto Potencial') return '#16a34a';
+          if (cat === 'Potencial Medio') return '#d97706';
+          return '#dc2626';
         }
 
         function badgeClassFor(cat) {
-          if(cat === 'Renta Baja') return 'badge-low';
-          if(cat === 'Renta Media') return 'badge-medium';
-          return 'badge-high';
+          if (cat === 'Alto Potencial') return 'badge-high';
+          if (cat === 'Potencial Medio') return 'badge-medium';
+          return 'badge-low';
+        }
+
+        function formatNumber(value) {
+          return Number(value || 0).toLocaleString('es-ES');
+        }
+
+        function formatFloat(value, digits) {
+          const num = Number(value || 0);
+          return Number.isFinite(num) ? num.toFixed(digits) : '0.00';
         }
 
         function renderTable(items) {
           const tableBody = document.getElementById('table-body');
           tableBody.innerHTML = items.map(r => `
             <tr>
-              <td><strong>${r.Distrito}</strong></td>
-              <td>${r.Renta_Media_Euros.toLocaleString('es-ES')} €</td>
-              <td><span class="badge ${badgeClassFor(r.Categoria)}">${r.Categoria}</span></td>
+              <td><strong>${r.municipio}</strong></td>
+              <td>${formatNumber(r.poblacion)} hab.</td>
+              <td>${formatNumber(r.num_restaurantes)}</td>
+              <td>${formatFloat(r.rest_por_1000hab, 2)}</td>
+              <td>${formatFloat(r.potencial, 3)}</td>
+              <td><span class="badge ${badgeClassFor(r.categoria_potencial)}">${r.categoria_potencial}</span></td>
             </tr>
           `).join('');
         }
 
-        // Draw spatial zones (1.3km radii) representing localized demographic reach
         data.forEach(r => {
-          const m = L.circle([r.Lat, r.Lon], {
-            radius: 1300, 
-            color: colorFor(r.Categoria), 
-            weight: 2,
-            fill: true, 
-            fillColor: colorFor(r.Categoria),
-            fillOpacity: 0.35
+          const lat = Number(r.lat);
+          const lon = Number(r.lon);
+          if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+            return;
+          }
+
+          const radius = 800 + (Number(r.densidad_pob_norm) || 0) * 2200;
+          const opacity = Math.min(0.85, 0.35 + (Number(r.potencial) || 0) * 0.5);
+          const color = colorFor(r.categoria_potencial);
+
+          const popupHtml = `
+            <div style="font-family:Arial; min-width:200px">
+              <b style="font-size:14px">${r.municipio}</b><br>
+              <hr style="margin:4px 0">
+              <b>${r.categoria_potencial}</b><br>
+              Poblacion: <b>${formatNumber(r.poblacion)}</b><br>
+              Restaurantes: <b>${formatNumber(r.num_restaurantes)}</b><br>
+              Rest/1.000 hab: <b>${formatFloat(r.rest_por_1000hab, 2)}</b><br>
+              Potencial: <b>${formatFloat(r.potencial, 3)}</b>
+            </div>
+          `;
+
+          const m = L.circle([lat, lon], {
+            radius,
+            color,
+            weight: 1,
+            fill: true,
+            fillColor: color,
+            fillOpacity: opacity
           })
-            .bindPopup(`<b>${r.Distrito}</b><br>Renta: <b>${r.Renta_Media_Euros.toLocaleString('es-ES')} €</b><br>Segmento: ${r.Categoria}`)
+            .bindPopup(popupHtml)
             .addTo(map);
-            
+
           markers.push({ marker: m, record: r });
         });
 
-        function filterBy(cat) {
-          const items = cat === 'Todas' ? data : data.filter(d => d.Categoria === cat);
-          markers.forEach(x => { 
-            if(items.indexOf(x.record) === -1) {
-              map.removeLayer(x.marker); 
+        const legend = L.control({ position: 'bottomleft' });
+        legend.onAdd = function () {
+          const div = L.DomUtil.create('div', 'legend');
+          div.innerHTML = `
+            <strong>Potencial de Restauracion</strong><br>
+            <span class="legend-dot legend-high"></span> Alto Potencial<br>
+            <span class="legend-dot legend-medium"></span> Potencial Medio<br>
+            <span class="legend-dot legend-low"></span> Potencial Bajo<br>
+            <small>Tamano de zona proporcional a poblacion</small>
+          `;
+          return div;
+        };
+        legend.addTo(map);
+
+        const categorySelect = document.getElementById('categoria');
+        const minPobInput = document.getElementById('min-pob');
+        const minPobValue = document.getElementById('min-pob-value');
+
+        const maxPob = Math.max(0, ...data.map(d => Number(d.poblacion) || 0));
+        minPobInput.max = String(Math.ceil(maxPob / 1000) * 1000);
+
+        function updateMinPobLabel() {
+          minPobValue.textContent = `${formatNumber(minPobInput.value)} hab.`;
+        }
+
+        function filterData() {
+          const cat = categorySelect.value;
+          const minPob = Number(minPobInput.value || 0);
+          const items = data.filter(d => {
+            const matchesCat = cat === 'Todas' || d.categoria_potencial === cat;
+            const matchesPob = Number(d.poblacion || 0) >= minPob;
+            return matchesCat && matchesPob;
+          });
+
+          markers.forEach(x => {
+            if (items.indexOf(x.record) === -1) {
+              map.removeLayer(x.marker);
             } else {
-              x.marker.addTo(map); 
+              x.marker.addTo(map);
             }
           });
+
           renderTable(items);
         }
 
-        // Events binding
-        document.getElementById('perfil').addEventListener('change', e => filterBy(e.target.value));
-        document.getElementById('reset').addEventListener('click', () => { 
-          document.getElementById('perfil').value = 'Todas'; 
-          filterBy('Todas'); 
+        categorySelect.addEventListener('change', filterData);
+        minPobInput.addEventListener('input', () => {
+          updateMinPobLabel();
+          filterData();
+        });
+        document.getElementById('reset').addEventListener('click', () => {
+          categorySelect.value = 'Todas';
+          minPobInput.value = '0';
+          updateMinPobLabel();
+          filterData();
         });
 
+        updateMinPobLabel();
         renderTable(data);
-        
+
       } catch (error) {
         console.error("Data pipeline execution error:", error);
-        document.getElementById('table-body').innerHTML = `<tr><td colspan="3" style="color:var(--primary); text-align:center; font-weight:bold; padding:2rem;">Error al mapear los recursos de datos locales.</td></tr>`;
+        document.getElementById('table-body').innerHTML = `<tr><td colspan="6" style="color:var(--primary); text-align:center; font-weight:bold; padding:2rem;">Error al mapear los recursos de datos locales.</td></tr>`;
       }
     }
     load();

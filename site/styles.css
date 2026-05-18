@@ -14,9 +14,9 @@
   --focus-ring: #2563eb;
   
   /* High-contrast Category Colors */
-  --cat-low: #1d4ed8;    /* Vibrant Blue */
-  --cat-medium: #b45309; /* Dark Amber */
-  --cat-high: #b91c1c;   /* Deep Red */
+  --cat-high: #16a34a;   /* Green - Alto Potencial */
+  --cat-medium: #d97706; /* Amber - Potencial Medio */
+  --cat-low: #dc2626;    /* Red - Potencial Bajo */
 
   --radius: 12px;
   --radius-sm: 6px;
@@ -97,6 +97,15 @@ main {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.control-group input[type="range"] {
+  accent-color: var(--primary);
+}
+
+#min-pob-value {
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 label {
@@ -232,9 +241,33 @@ tr:hover td {
   font-weight: 600;
 }
 
-.badge-low { background-color: #eff6ff; color: var(--cat-low); }
+.badge-high { background-color: #ecfdf3; color: var(--cat-high); }
 .badge-medium { background-color: #fef3c7; color: var(--cat-medium); }
-.badge-high { background-color: #fef2f2; color: var(--cat-high); }
+.badge-low { background-color: #fef2f2; color: var(--cat-low); }
+
+/* Map Legend */
+.legend {
+  background: var(--bg-card);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.legend-high { background-color: var(--cat-high); }
+.legend-medium { background-color: var(--cat-medium); }
+.legend-low { background-color: var(--cat-low); }
 
 /* Helper utility for Screen Readers (a11y) */
 .sr-only {
