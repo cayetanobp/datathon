@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-CSV_PATH = "Economia-y-empleo - Economia y empleo.csv"
+CSV_PATH = "data/Economia-y-empleo - Economia y empleo.csv"
 
 
 def _fallback_data():
