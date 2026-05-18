@@ -10,8 +10,8 @@ from geopy.geocoders import Nominatim
 # ==========================================
 NUM_THREADS = 3              # Número de hilos simultáneos (Aumenta o disminuye según veas)
 FRECUENCIA_AUTOGUARDADO = 20   # Guardar en disco cada X restaurantes procesados
-archivo_origen = 'restaurantes_bruto.csv'  
-archivo_destino = 'restaurantes_multithread_malaga.csv'
+archivo_origen = 'data/restaurantes/restaurantes_bruto.csv'  
+archivo_destino = 'data/restaurantes/restaurantes_multithread_malaga.csv'
 # ==========================================
 
 # Inicializador de bloqueos para proteger la escritura en el archivo
