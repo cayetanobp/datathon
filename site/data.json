@@ -1,0 +1,79 @@
+[
+  {
+    "Distrito": "Centro",
+    "Lat": 36.7213,
+    "Lon": -4.4214,
+    "Renta_Media_Euros": 29000,
+    "Categoria": "Renta Alta"
+  },
+  {
+    "Distrito": "Este (El Palo/Pedregalejo)",
+    "Lat": 36.7236,
+    "Lon": -4.3621,
+    "Renta_Media_Euros": 36000,
+    "Categoria": "Renta Alta"
+  },
+  {
+    "Distrito": "Ciudad Jardín",
+    "Lat": 36.746,
+    "Lon": -4.426,
+    "Renta_Media_Euros": 20000,
+    "Categoria": "Renta Baja"
+  },
+  {
+    "Distrito": "Bailén-Miraflores",
+    "Lat": 36.73,
+    "Lon": -4.44,
+    "Renta_Media_Euros": 21000,
+    "Categoria": "Renta Baja"
+  },
+  {
+    "Distrito": "Palma-Palmilla",
+    "Lat": 36.74,
+    "Lon": -4.43,
+    "Renta_Media_Euros": 16000,
+    "Categoria": "Renta Baja"
+  },
+  {
+    "Distrito": "Cruz de Humilladero",
+    "Lat": 36.715,
+    "Lon": -4.445,
+    "Renta_Media_Euros": 23000,
+    "Categoria": "Renta Media"
+  },
+  {
+    "Distrito": "Carretera de Cádiz",
+    "Lat": 36.6974,
+    "Lon": -4.4447,
+    "Renta_Media_Euros": 24000,
+    "Categoria": "Renta Media"
+  },
+  {
+    "Distrito": "Churriana",
+    "Lat": 36.6667,
+    "Lon": -4.5,
+    "Renta_Media_Euros": 25000,
+    "Categoria": "Renta Media"
+  },
+  {
+    "Distrito": "Campanillas",
+    "Lat": 36.7369,
+    "Lon": -4.55,
+    "Renta_Media_Euros": 22000,
+    "Categoria": "Renta Media"
+  },
+  {
+    "Distrito": "Puerto de la Torre",
+    "Lat": 36.75,
+    "Lon": -4.48,
+    "Renta_Media_Euros": 28000,
+    "Categoria": "Renta Media"
+  },
+  {
+    "Distrito": "Teatinos-Universidad",
+    "Lat": 36.7179,
+    "Lon": -4.4744,
+    "Renta_Media_Euros": 27500,
+    "Categoria": "Renta Media"
+  }
+]

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Málaga Gastro-Locator (estático)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin=""/>
+  <style>body {{ font-family: Arial, sans-serif; margin:0; }} #map {{ height:60vh; }} .controls {{ padding:10px; }}</style>
+</head>
+<body>
+  <header style="padding:12px; background:#f7f7f7;"><h1>📍 Málaga Gastro-Locator</h1><p>Versión estática desplegada por GitHub Pages.</p></header>
+  <div class="controls">
+    <label>Perfil cliente: <select id="perfil"><option value="Todas">Todas</option><option>Renta Baja</option><option>Renta Media</option><option>Renta Alta</option></select></label>
+    <button id="reset">Mostrar todos</button>
+  </div>
+  <div id="map"></div>
+  <section style="padding:12px;"><h2>Distritos</h2><table id="table" border="1" cellpadding="6"></table></section>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    async function load(){
+      const res = await fetch('data.json');
+      const data = await res.json();
+      const map = L.map('map').setView([36.7213, -4.4214], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
+
+      const markers = [];
+      function colorFor(cat){
+        return cat === 'Renta Baja' ? 'blue' : (cat === 'Renta Media' ? 'orange' : 'red');
+      }
+
+      function renderTable(items){
+        const table = document.getElementById('table');
+        table.innerHTML = '<tr><th>Distrito</th><th>Renta</th><th>Categoria</th></tr>' + items.map(r=>`<tr><td>${r.Distrito}</td><td>${r.Renta_Media_Euros} €</td><td>${r.Categoria}</td></tr>`).join('');
+      }
+
+      data.forEach(r=>{
+        const m = L.circleMarker([r.Lat, r.Lon], {radius:10, color: colorFor(r.Categoria), fill:true, fillOpacity:0.6})
+          .bindPopup(`<b>${r.Distrito}</b><br>Renta: ${r.Renta_Media_Euros} €`)
+          .addTo(map);
+        markers.push({marker:m, record:r});
+      });
+
+      function filterBy(cat){
+        const items = cat === 'Todas' ? data : data.filter(d=>d.Categoria===cat);
+        markers.forEach(x=>{ if(items.indexOf(x.record)===-1) map.removeLayer(x.marker); else x.marker.addTo(map); });
+        renderTable(items);
+      }
+
+      document.getElementById('perfil').addEventListener('change', e=>filterBy(e.target.value));
+      document.getElementById('reset').addEventListener('click', ()=>{ document.getElementById('perfil').value='Todas'; filterBy('Todas'); });
+
+      renderTable(data);
+    }
+    load();
+  </script>
+</body>
+</html>
