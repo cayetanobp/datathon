@@ -138,6 +138,9 @@ def build_cruce(df_rest_norm, df_pob_norm):
     # Restaurantes por cada 1.000 habitantes
     df["rest_por_1000hab"] = (df["num_restaurantes"] / df["poblacion"] * 1000).round(4)
 
+    # Excluir Malaga del dataset final
+    df = df[df["grupo"].fillna("").str.lower() != "malaga"].copy()
+
     # Normalizar densidad de restauración (0=ninguno, 1=máximo)
     min_d, max_d = df["rest_por_1000hab"].min(), df["rest_por_1000hab"].max()
     if max_d > min_d:
@@ -154,8 +157,10 @@ def build_cruce(df_rest_norm, df_pob_norm):
 
     # Categoría
     def categorize(p):
-        if p >= 0.65: return "Alto Potencial"
-        if p >= 0.35: return "Potencial Medio"
+        if p > 0.5:
+            return "Alto Potencial"
+        if p >= 0.3:
+            return "Potencial Medio"
         return "Potencial Bajo"
 
     df["categoria_potencial"] = df["potencial"].apply(categorize)

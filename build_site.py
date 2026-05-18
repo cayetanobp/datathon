@@ -1,5 +1,6 @@
 import os
 import json
+import unicodedata
 import pandas as pd
 
 OUT_DIR = "site"
@@ -21,6 +22,26 @@ REQUIRED_COLS = {
 }
 
 
+def categorize_potencial(value):
+    if pd.isna(value):
+        return "Potencial Bajo"
+    p = float(value)
+    if p > 0.5:
+        return "Alto Potencial"
+    if p >= 0.3:
+        return "Potencial Medio"
+    return "Potencial Bajo"
+
+
+def normalize_text(value):
+    text = str(value).strip().lower()
+    return "".join(
+        ch
+        for ch in unicodedata.normalize("NFKD", text)
+        if not unicodedata.combining(ch)
+    )
+
+
 def load_cruce_data():
     if os.path.exists(SOURCE_CSV):
         df = pd.read_csv(SOURCE_CSV)
@@ -39,7 +60,8 @@ def load_cruce_data():
         missing_list = ", ".join(sorted(missing))
         raise SystemExit(f"Source data missing required columns: {missing_list}")
 
-    df = df.sort_values("potencial", ascending=False).reset_index(drop=True)
+    municipio_norm = df["municipio"].apply(normalize_text)
+    df = df[municipio_norm != "malaga"].copy()
 
     numeric_cols = [
         "poblacion",
@@ -57,6 +79,9 @@ def load_cruce_data():
     df["num_restaurantes"] = df["num_restaurantes"].fillna(0).astype(int)
     if "anio" in df.columns:
         df["anio"] = pd.to_numeric(df["anio"], errors="coerce").fillna(0).astype(int)
+
+    df["categoria_potencial"] = df["potencial"].apply(categorize_potencial)
+    df = df.sort_values("potencial", ascending=False).reset_index(drop=True)
 
     return df
 

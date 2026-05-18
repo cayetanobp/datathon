@@ -1,21 +1,5 @@
 [
   {
-    "grupo": "malaga",
-    "municipio": "Málaga",
-    "anio": 2023,
-    "poblacion": 586384,
-    "pct_poblacion": 52.32,
-    "num_restaurantes": 590,
-    "pct_restaurantes": 45.91,
-    "rest_por_1000hab": 1.0062,
-    "densidad_pob_norm": 1.0,
-    "densidad_rest_norm": 0.2573,
-    "potencial": 0.8456,
-    "categoria_potencial": "Alto Potencial",
-    "lat": 36.72038483236798,
-    "lon": -4.424071535093696
-  },
-  {
     "grupo": "pizarra",
     "municipio": "Pizarra",
     "anio": 2023,
@@ -27,7 +11,7 @@
     "densidad_pob_norm": 0.0156,
     "densidad_rest_norm": 0.0,
     "potencial": 0.6062,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.77,
     "lon": -4.705
   },
@@ -43,7 +27,7 @@
     "densidad_pob_norm": 0.0054,
     "densidad_rest_norm": 0.0,
     "potencial": 0.6022,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.858,
     "lon": -4.425
   },
@@ -59,7 +43,7 @@
     "densidad_pob_norm": 0.0472,
     "densidad_rest_norm": 0.036,
     "potencial": 0.5973,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.715926725,
     "lon": -4.643440699999999
   },
@@ -75,7 +59,7 @@
     "densidad_pob_norm": 0.0446,
     "densidad_rest_norm": 0.0476,
     "potencial": 0.5893,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.64113746,
     "lon": -4.69016692
   },
@@ -91,7 +75,7 @@
     "densidad_pob_norm": 0.0863,
     "densidad_rest_norm": 0.1047,
     "potencial": 0.5717,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.71537656190476,
     "lon": -4.285169623809524
   },
@@ -107,7 +91,7 @@
     "densidad_pob_norm": 0.0733,
     "densidad_rest_norm": 0.0995,
     "potencial": 0.5696,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.66159815882353,
     "lon": -4.563490805882353
   },
@@ -123,7 +107,7 @@
     "densidad_pob_norm": 0.0218,
     "densidad_rest_norm": 0.0757,
     "potencial": 0.5633,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.8447911,
     "lon": -4.7291261250000005
   },
@@ -139,7 +123,7 @@
     "densidad_pob_norm": 0.0414,
     "densidad_rest_norm": 0.092,
     "potencial": 0.5614,
-    "categoria_potencial": "Potencial Medio",
+    "categoria_potencial": "Alto Potencial",
     "lat": 36.66749893333333,
     "lon": -4.751862755555555
   },
